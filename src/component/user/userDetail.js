@@ -42,7 +42,6 @@ class UserDetail extends React.Component{
         }else {
             this.setState({ isNew: true });
         }
-        console.log(detail)
     }
     
     onSubmit = () => {
