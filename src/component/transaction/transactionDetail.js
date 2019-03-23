@@ -75,7 +75,7 @@ class TransactionDetail extends React.Component{
             let formData = this.props.form.getFieldsValue();
             const utcOffset = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
             
-            if(formData.deductedPoint == 0){
+            if(formData.deductedPoint == 0 || !formData.deductedPoint){
                 //only get user buy phone
                 axios.get('/user/getByPhoneOrInsert/'+formData.phone).
                 then(res=>{
@@ -170,6 +170,8 @@ class TransactionDetail extends React.Component{
     
     render(){
         const { getFieldProps, getFieldError } = this.props.form;
+        let userType = sessionStorage.getItem("type");
+
         return (
             <div>
             <NavBar className='fixd-header' mode='dark'
@@ -177,87 +179,106 @@ class TransactionDetail extends React.Component{
             onLeftClick={() => this.props.history.goBack()}
             >Detail</NavBar>
             <div style={{marginTop:45}}> 
+            {userType == '1' ? 
             <form>
-                <List
-                    className="date-picker-list"
-                    renderFooter={() => getFieldError('phone') && getFieldError('phone').join(',')}
+            <List
+                className="date-picker-list"
+                renderFooter={() => getFieldError('phone') && getFieldError('phone').join(',')}
+            >
+                <InputItem
+                disabled
+                placeholder="Phone number cannot be empty"
+                error={!!getFieldError('phone')}
+                {...getFieldProps('phone', {
+                    initialValue: this.state.phone,
+                    rules: [
+                    { required: true, message: 'Must type a phone number' },
+                    ],
+                })}
+                >Phone</InputItem>
+                 <InputItem
+                 disabled
+                placeholder="Payment cannot be empty"
+                error={!!getFieldError('payment')}
+                {...getFieldProps('payment', {
+                    initialValue: this.state.payment,
+                    rules: [
+                    { required: true, message: 'Must type the payment' },
+                    ],
+                })}
+                >Payment</InputItem>
+                <InputItem
+                disabled
+                placeholder="How many points want to deduct"
+                error={!!getFieldError('deductedPoint')}
+                {...getFieldProps('deductedPoint', {
+                    initialValue: this.state.deductedPoint,
+                })}
+                >Point</InputItem>
+                <DatePicker
+                disabled
+                {...getFieldProps('dp', {
+                    initialValue: this.state.dpValue,
+                    rules: [
+                    { required: true, message: 'Must select a date' },
+                    { validator: this.validateDatePicker },
+                    ],
+                })}
                 >
-                    <InputItem
-                    placeholder="Phone number cannot be empty"
-                    error={!!getFieldError('phone')}
-                    {...getFieldProps('phone', {
-                        initialValue: this.state.phone,
-                        rules: [
-                        { required: true, message: 'Must type a phone number' },
-                        ],
-                    })}
-                    >Phone</InputItem>
-                     <InputItem
-                    placeholder="Payment cannot be empty"
-                    error={!!getFieldError('payment')}
-                    {...getFieldProps('payment', {
-                        initialValue: this.state.payment,
-                        rules: [
-                        { required: true, message: 'Must type the payment' },
-                        ],
-                    })}
-                    >Payment</InputItem>
-                    <InputItem
-                    placeholder="How many points want to deduct"
-                    error={!!getFieldError('deductedPoint')}
-                    {...getFieldProps('deductedPoint', {
-                        initialValue: this.state.deductedPoint,
-                    })}
-                    >Point</InputItem>
-                    {/* <InputItem
-                    placeholder=""
-                    disabled
-                    error={!!getFieldError('point')}
-                    {...getFieldProps('point', {
-                        initialValue: this.state.point + ' points still have',
-                        
-                    })}
-                    >Balance</InputItem> */}
-                    <DatePicker
-                    {...getFieldProps('dp', {
-                        initialValue: this.state.dpValue,
-                        rules: [
-                        { required: true, message: 'Must select a date' },
-                        { validator: this.validateDatePicker },
-                        ],
-                    })}
-                    >
-                    <List.Item arrow="horizontal">Date</List.Item>
-                    </DatePicker>
-                    <List.Item>
-                    <Button type="primary" size="small" inline onClick={this.onSubmit}>Submit</Button>
-                    <Button size="small" inline style={{ marginLeft: '2.5px' }} onClick={this.onReset}>Reset</Button>
-                    <Button type="warning" size="small" inline style={{ float:'right' }} onClick={this.onDelete}>Delete</Button>
-                    </List.Item>
-                </List>
-                </form>
-
-            {/* <WingBlank>
-                <List>
-                    {this.props.msg?<p className='error-msg'>{this.props.msg}</p>:null}
-                    <InputItem
-                        onChange={v=>this.handleChange('phone',v)}
-
-                    >Phone</InputItem>
-                    <WhiteSpace />
-                    <InputItem
-                        onChange={v=>this.handleChange('payment',v)}
-
-                    >Payment</InputItem>
-                    <WhiteSpace />
-                    <InputItem
-                        onChange={v=>this.handleChange('date',v)}
-
-                    >Date</InputItem>
-                </List>
-                <WhiteSpace />
-                <Button onClick={()=>this.save()} type='primary'>Save</Button>
-            </WingBlank> */}
+                <List.Item arrow="horizontal">Date</List.Item>
+                </DatePicker>
+            </List>
+            </form>:
+            <form> 
+            <List
+                className="date-picker-list"
+                renderFooter={() => getFieldError('phone') && getFieldError('phone').join(',')}
+            >
+                <InputItem
+                placeholder="Phone number cannot be empty"
+                error={!!getFieldError('phone')}
+                {...getFieldProps('phone', {
+                    initialValue: this.state.phone,
+                    rules: [
+                    { required: true, message: 'Must type a phone number' },
+                    ],
+                })}
+                >Phone</InputItem>
+                <InputItem
+                placeholder="Payment cannot be empty"
+                error={!!getFieldError('payment')}
+                {...getFieldProps('payment', {
+                    initialValue: this.state.payment,
+                    rules: [
+                    { required: true, message: 'Must type the payment' },
+                    ],
+                })}
+                >Payment</InputItem>
+                <InputItem
+                placeholder="How many points want to deduct"
+                error={!!getFieldError('deductedPoint')}
+                {...getFieldProps('deductedPoint', {
+                    initialValue: this.state.deductedPoint,
+                })}
+                >Point</InputItem>
+                <DatePicker
+                {...getFieldProps('dp', {
+                    initialValue: this.state.dpValue,
+                    rules: [
+                    { required: true, message: 'Must select a date' },
+                    { validator: this.validateDatePicker },
+                    ],
+                })}
+                >
+                <List.Item arrow="horizontal">Date</List.Item>
+                </DatePicker>
+                <List.Item>
+                <Button type="primary" size="small" inline onClick={this.onSubmit}>Submit</Button>
+                <Button size="small" inline style={{ marginLeft: '2.5px' }} onClick={this.onReset}>Reset</Button>
+                <Button type="warning" size="small" inline style={{ float:'right' }} onClick={this.onDelete}>Delete</Button>
+                </List.Item>
+            </List>
+            </form>}
            </div>
            </div>
         )

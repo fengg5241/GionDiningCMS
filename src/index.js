@@ -4,10 +4,11 @@ import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 import { Provider } from 'react-redux'
 import { BrowserRouter, Route, Redirect,Switch } from 'react-router-dom'
-
+import enUS from 'antd-mobile/lib/locale-provider/en_US';
+import {LocaleProvider} from 'antd-mobile';
 import Login from './container/login/login'
 import Register from './container/register/register'
-import AuthRoute from './component/authroute/authroute'
+import AuthRoute from './component/authroute/AuthRoute'
 import reducers from './reducer'
 import './config'
 import './index.css'
@@ -22,7 +23,9 @@ function Boss(){
 	return <h2>BOSS页面</h2>
 }
 ReactDom.render(
-	(<Provider store={store}>
+	(
+	<Provider store={store}>
+		<LocaleProvider locale={enUS}>
 		<BrowserRouter>
 			<div>
 				<AuthRoute></AuthRoute>
@@ -36,6 +39,7 @@ ReactDom.render(
 				</Switch>
 			</div>
 		</BrowserRouter>
+		</LocaleProvider>
 	</Provider>),
 	document.getElementById('root')
 )

@@ -25,6 +25,6 @@
 }
 
 #transaction-list,#user-list{
-	height:590px;
+	height:580px;
 	overflow-y:scroll;
 }

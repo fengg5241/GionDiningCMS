@@ -16,6 +16,10 @@ class AuthRoute extends React.Component{
 		if (publicList.indexOf(pathname)>-1) {
 			return null
 		}
+
+		if(!sessionStorage.getItem('phone')){
+			this.props.history.push('/login')
+		}
 		// 获取用户信息
 		// axios.get('/user/info').
 		// 	then(res=>{
@@ -28,12 +32,12 @@ class AuthRoute extends React.Component{
 		// 			}
 		// 		}
 		// 	})
-		let returnUser = {
-			id:1,
-			user:'test',
-			type:'customer'
-		}
-		this.props.loadData(returnUser)
+		// let returnUser = {
+		// 	id:1,
+		// 	user:'test',
+		// 	type:'customer'
+		// }
+		// this.props.loadData(returnUser)
 		// this.props.history.push('/login')
 		// 是否登录
 		// 现在的url地址  login是不需要跳转的

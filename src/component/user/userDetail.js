@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom'
 import {List,WhiteSpace,WingBlank,NavBar,Icon, InputItem, Button,DatePicker} from 'antd-mobile'
 import { createForm } from 'rc-form';
 import axios from 'axios'
+import Constants from '../../constants'
 
 const nowTimeStamp = Date.now();
 const now = new Date(nowTimeStamp);
@@ -21,6 +22,8 @@ class UserDetail extends React.Component{
             phone:'',
             name:'',
             email:'',
+            point:0,
+            payment:0,
             isNew:true
         }
     }
@@ -32,7 +35,9 @@ class UserDetail extends React.Component{
                 isNew: false,
                 phone:detail.phone,
                 name:detail.name,
-                email:detail.email
+                email:detail.email,
+                point:(detail.totalPayment * Constants.POINT_RATE).toFixed(2) - detail.point,
+                payment:detail.totalPayment
              });
         }else {
             this.setState({ isNew: true });
@@ -213,6 +218,7 @@ class UserDetail extends React.Component{
                     })}
                     >Phone</InputItem>
                      <InputItem
+                    
                     placeholder="Name"
                     error={!!getFieldError('name')}
                     {...getFieldProps('name', {
@@ -226,6 +232,27 @@ class UserDetail extends React.Component{
                         initialValue: this.state.email,
                     })}
                     >Email</InputItem>
+                    <InputItem
+                    disabled
+                    placeholder="payment"
+                    {...getFieldProps('payment', {
+                        initialValue: this.state.payment,
+                    })}
+                    >Payment</InputItem>
+                    <InputItem
+                    disabled
+                    placeholder="point"
+                    {...getFieldProps('point', {
+                        initialValue: this.state.point,
+                    })}
+                    >Point</InputItem>
+                    {/* <InputItem
+                    disabled
+                    placeholder="point"
+                    {...getFieldProps('point', {
+                        initialValue: this.state.password,
+                    })}
+                    >Password</InputItem> */}
 
 
                     <List.Item>

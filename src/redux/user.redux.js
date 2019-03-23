@@ -45,24 +45,31 @@ export function loadData(userinfo){
 }
 export function login({user,pwd}){
 	if (!user||!pwd) {
-		return errorMsg('用户密码必须输入')
+		return errorMsg('UserName or Password cannnot be empty !')
 	}
 	return dispatch=>{
 		let returnUser = {
-			id:1,
-			user:'test',
-			type:'customer'
+			password:pwd,
+			phone:user
 		}
-		dispatch(loginSuccess(returnUser))
-		// axios.post('/user/login',{user,pwd})
-		// 	.then(res=>{
-		// 		if (res.status==200&&res.data.code===0) {
-		// 			// dispatch(registerSuccess({user,pwd,type}))
-		// 			dispatch(loginSuccess(res.data.data))
-		// 		}else{
-		// 			dispatch(errorMsg(res.data.msg))
-		// 		}
-		// 	})		
+		// dispatch(loginSuccess(returnUser))
+		axios.post('/user/login',returnUser)
+			.then(res=>{
+				if (res.status==200) {
+					if(res.data){
+						sessionStorage.setItem("phone",user)
+						sessionStorage.setItem("type",res.data.type)
+						dispatch(loginSuccess(res.data))
+					}else {
+						dispatch(errorMsg("User name or password is wrong !"))
+					}
+					
+					// dispatch(registerSuccess({user,pwd,type}))
+					
+				}else{
+					dispatch(errorMsg(res.data.msg))
+				}
+			})		
 	}
 
 

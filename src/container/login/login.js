@@ -19,6 +19,8 @@ class Login extends React.Component{
 		}
 		this.register = this.register.bind(this)
 		this.handleLogin = this.handleLogin.bind(this)
+
+		// alert(1)
 	}
 	register(){
 		this.props.history.push('/register')
@@ -34,7 +36,8 @@ class Login extends React.Component{
 	render(){
 		return (
 			<div>
-				{this.props.redirectTo? <Redirect to={this.props.redirectTo} />:null}
+				{/* {this.props.redirectTo? <Redirect to={this.props.redirectTo} />:null} */}
+				{sessionStorage.getItem("phone") ? <Redirect to='/transaction' /> : null}
 				<Logo></Logo>
 				<WingBlank>
 					<List>
@@ -51,8 +54,8 @@ class Login extends React.Component{
 					</List>
 					<WhiteSpace />
 					<Button onClick={this.handleLogin} type='primary'>Login</Button>
-					<WhiteSpace />
-					<Button onClick={this.register} type='primary'>Register</Button>
+					{/* <WhiteSpace /> */}
+					{/* <Button onClick={this.register} type='primary'>Register</Button> */}
 				</WingBlank>
 
 
