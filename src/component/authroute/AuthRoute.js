@@ -1,23 +1,53 @@
-import React from 'react';
+import React from 'react'
+import axios from 'axios'
+import { withRouter } from 'react-router-dom'
+import { loadData } from '../../redux/user.redux'
+import { connect } from 'react-redux'
 
-import { withRouter,Route } from 'react-router-dom';
-import { withCookies } from 'react-cookie';
-import AppSettings from '../../configs/AppSettings'
-
-const loginRequired = process.env.REACT_APP_LOGIN_REQUIRED 
+@withRouter //可以看到history对象
+@connect(
+	null,
+	{loadData}
+)
 class AuthRoute extends React.Component{
-    
-    render(){
-        return (
-            <Route
-                render={props => (
-                    loginRequired === "false" || this.props.cookies.get('curUser') ? null : 
-                    window.location.href=AppSettings.get().LOGIN_URL
-                    // window.location.href="http://localhost:3000/CM-WEBUI-STATIC/login"
-                )}
-            />
-        );
-    };
-}
+	componentDidMount() {
+		const publicList = ['/login','/register']
+		const pathname = this.props.location.pathname
+		if (publicList.indexOf(pathname)>-1) {
+			return null
+		}
 
-export default withCookies(withRouter(AuthRoute));
+		if(!sessionStorage.getItem('phone')){
+			this.props.history.push('/login')
+		}
+		// 获取用户信息
+		// axios.get('/user/info').
+		// 	then(res=>{
+		// 		if (res.status==200) {
+		// 			if (res.data.code==0) {
+		// 				// 有登录信息de
+		// 				this.props.loadData(res.data.data)
+		// 			}else{
+		// 				this.props.history.push('/login')
+		// 			}
+		// 		}
+		// 	})
+		// let returnUser = {
+		// 	id:1,
+		// 	user:'test',
+		// 	type:'customer'
+		// }
+		// this.props.loadData(returnUser)
+		// this.props.history.push('/login')
+		// 是否登录
+		// 现在的url地址  login是不需要跳转的
+
+		// 用户的type 身份是boss还是牛人
+		// 用户是否完善信息（选择头像 个人简介）
+	}
+	render(){
+		return null
+	}
+
+}
+export default AuthRoute
