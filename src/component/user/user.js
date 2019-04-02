@@ -33,7 +33,7 @@ class User extends React.Component{
 	}
 
     getAll(){
-        axios.get('/user/getAllWithPoint').
+        axios.get(Constants.SERVICE_URL + '/user/getAllWithPoint').
         then(res=>{
             if(res.status===200){
                 this.setState({data:res.data})
@@ -51,7 +51,7 @@ class User extends React.Component{
 
     searchByPhone(phone){
         if(phone){
-            axios.get('/user/getUserWithPointByPhone/'+phone).
+            axios.get(Constants.SERVICE_URL + '/user/getUserWithPointByPhone/'+phone).
             then(res=>{
                 if(res.status===200){
                     if(res.data){
@@ -106,8 +106,8 @@ class User extends React.Component{
                                     state: { detail: v }
                                 })}
                                 //  extra={this.convertTimeToString(v.createTime)}
-                                >{v.phone}  total spend ${v.totalPayment}, has {(v.totalPayment * Constants.POINT_RATE).toFixed(2) - v.point} points</Item>
-                                
+                                // >{v.phone}  total spend ${v.totalPayment}, has {(v.totalPayment * Constants.POINT_RATE).toFixed(2) - v.point} points</Item>
+                                >{v.phone}  total spend ${v.totalPayment}, has {v.point} points</Item>
                             ))}
                         </List>
                         {/* <Pagination total={5} current={1} locale={locale} /> */}

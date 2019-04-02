@@ -1,9 +1,9 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { withRouter } from 'react-router-dom'
-import {List,WhiteSpace,WingBlank,NavBar,Icon, InputItem, Button,DatePicker} from 'antd-mobile'
+import {List,NavBar,Icon, InputItem, Button,DatePicker} from 'antd-mobile'
 import { createForm } from 'rc-form';
 import axios from 'axios'
+import Constants from '../../constants'
 
 const nowTimeStamp = Date.now();
 const now = new Date(nowTimeStamp);
@@ -11,7 +11,7 @@ const utcOffset = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
 console.log(now, utcOffset, now.toISOString(), utcOffset.toISOString());
 
 const Item = List.Item;
-const Brief = Item.Brief;
+let oldPayment = 0;
 @withRouter
 class TransactionDetail extends React.Component{
     
@@ -31,12 +31,13 @@ class TransactionDetail extends React.Component{
     componentDidMount() {
         var detail = this.props.location.state && this.props.location.state.detail
         if(detail){ // passed from transaction list page
+            oldPayment = detail.payment ? detail.payment : 0
             this.setState({ 
                 isNew: false,
                 phone:detail.user.phone,
-                payment:detail.payment,
+                payment:oldPayment,
                 deductedPoint:detail.point,
-                dpValue:new Date(detail.createTime)
+                dpValue:new Date(detail.createTime),
              });
         }else {
             this.setState({ isNew: true });
@@ -45,10 +46,11 @@ class TransactionDetail extends React.Component{
     }
     
     saveTransaction = (userId,formData)=> {
+        let deductPoint = formData.deductedPoint ? formData.deductedPoint : 0;
         let record = {
             user:{id:userId},
             comment:'Food',
-            point:formData.deductedPoint,
+            point:deductPoint,
             payment:formData.payment,
             createTime:formData.dp,
             updateTime:now.getTime()
@@ -61,10 +63,24 @@ class TransactionDetail extends React.Component{
             operationType = "update";
             
         }
-        axios.post('/transaction/'+operationType,record).
-        then(res=>{
+        axios.post(Constants.SERVICE_URL + '/transaction/'+operationType,record)
+        .then(res=>{
             if (res.status===200) {
-                this.props.history.goBack();
+                if(oldPayment != formData.payment){
+                    let userPoint = {
+                        id:userId,
+                        point:((formData.payment - oldPayment) * Constants.POINT_RATE).toFixed(2) - deductPoint,
+                    }
+                    axios.post(Constants.SERVICE_URL + '/user/addPoints',userPoint).
+                    then(res=>{
+                        if (res.status===200) {
+                            this.props.history.goBack();
+                        }
+                    })
+                }else {
+                    this.props.history.goBack(); 
+                }
+                
             }
         })
     }
@@ -77,18 +93,18 @@ class TransactionDetail extends React.Component{
             
             if(formData.deductedPoint == 0 || !formData.deductedPoint){
                 //only get user buy phone
-                axios.get('/user/getByPhoneOrInsert/'+formData.phone).
+                axios.get(Constants.SERVICE_URL + '/user/getByPhoneOrInsert/'+formData.phone).
                 then(res=>{
                     if(res.status===200){
                         this.saveTransaction(res.data.id,formData);
                     }
                 })
             }else {
-                axios.get('/user/getByPhoneOrInsertWithPoint/'+formData.phone).
+                axios.get(Constants.SERVICE_URL + '/user/getByPhoneOrInsertWithPoint/'+formData.phone).
                 then(res=>{
                     if(res.status===200){
                         // point balance
-                        let pointBalance = res.data.totalPayment - res.data.point;
+                        let pointBalance = res.data.totalPayment * Constants.POINT_RATE - res.data.point;
                         if(formData.deductedPoint <= pointBalance){
                             this.saveTransaction(res.data.id,formData);
                         }else {
@@ -116,7 +132,7 @@ class TransactionDetail extends React.Component{
             id:detail.id,
             updateTime:Date.now()
         }
-        axios.post('/transaction/delete',record).
+        axios.post(Constants.SERVICE_URL + '/transaction/delete',record).
         then(res=>{
             if (res.status===200) {
                 this.props.history.goBack()

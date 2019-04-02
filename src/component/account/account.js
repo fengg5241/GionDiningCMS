@@ -44,7 +44,7 @@ class Account extends React.Component{
                 password:formData.password,
                 updateTime:now.getTime()
             }
-            axios.post('/user/updatePassword',record).
+            axios.post(Constants.SERVICE_URL + '/user/updatePassword',record).
             then(res=>{
                 if (res.status===200) {
                     // this.props.history.goBack();

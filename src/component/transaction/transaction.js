@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import {List,WhiteSpace,WingBlank,Pagination, SearchBar,NavBar,Button} from 'antd-mobile'
 import axios from 'axios'
 import {withRouter} from 'react-router-dom'
+import Constants from '../../constants'
 
 const Item = List.Item;
 const Brief = Item.Brief;
@@ -31,7 +32,7 @@ class Transaction extends React.Component{
     }
     
     getAll(){
-        axios.get('/transaction/getAll').
+        axios.get(Constants.SERVICE_URL + '/transaction/getAll').
         then(res=>{
             if(res.status===200){
                 this.setState({data:res.data})
@@ -50,7 +51,7 @@ class Transaction extends React.Component{
 
     searchByPhone(phone){
         if(phone){
-            axios.get('/transaction/getAllByPhone/'+phone).
+            axios.get(Constants.SERVICE_URL + '/transaction/getAllByPhone/'+phone).
             then(res=>{
                 if(res.status===200){
                     if(res.data){

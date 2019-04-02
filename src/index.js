@@ -3,7 +3,7 @@ import ReactDom from 'react-dom'
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 import { Provider } from 'react-redux'
-import { BrowserRouter, Route, Redirect,Switch } from 'react-router-dom'
+import { BrowserRouter, Route,Switch } from 'react-router-dom'
 import enUS from 'antd-mobile/lib/locale-provider/en_US';
 import {LocaleProvider} from 'antd-mobile';
 import Login from './container/login/login'
@@ -26,7 +26,7 @@ ReactDom.render(
 	(
 	<Provider store={store}>
 		<LocaleProvider locale={enUS}>
-		<BrowserRouter>
+		<BrowserRouter basename="/gion-dining-cms" >
 			<div>
 				<AuthRoute></AuthRoute>
 				<Switch>
