@@ -40,7 +40,7 @@ class Account extends React.Component{
 
             
             let record = {
-                phone:sessionStorage.getItem("phone"),
+                phone:localStorage.getItem("phone"),
                 password:formData.password,
                 updateTime:now.getTime()
             }
@@ -78,8 +78,8 @@ class Account extends React.Component{
     }
 
     logout(){
-        sessionStorage.removeItem("phone")
-        sessionStorage.removeItem("type")
+        localStorage.removeItem("phone")
+        localStorage.removeItem("type")
         this.props.history.push("/login")
     }
     

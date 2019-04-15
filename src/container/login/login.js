@@ -37,7 +37,7 @@ class Login extends React.Component{
 		return (
 			<div>
 				{/* {this.props.redirectTo? <Redirect to={this.props.redirectTo} />:null} */}
-				{sessionStorage.getItem("phone") ? <Redirect to='/transaction' /> : null}
+				{localStorage.getItem("phone") ? <Redirect to='/transaction' /> : null}
 				<Logo></Logo>
 				<WingBlank>
 					<List>

@@ -16,7 +16,7 @@ class AuthRoute extends React.Component{
 			return null
 		}
 
-		if(!sessionStorage.getItem('phone')){
+		if(!localStorage.getItem('phone')){
 			this.props.history.push('/login')
 		}
 		// 获取用户信息

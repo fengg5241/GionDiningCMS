@@ -58,8 +58,8 @@ export function login({user,pwd}){
 			.then(res=>{
 				if (res.status==200) {
 					if(res.data){
-						sessionStorage.setItem("phone",user)
-						sessionStorage.setItem("type",res.data.type)
+						localStorage.setItem("phone",user)
+						localStorage.setItem("type",res.data.type)
 						dispatch(loginSuccess(res.data))
 					}else {
 						dispatch(errorMsg("User name or password is wrong !"))

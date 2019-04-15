@@ -22,10 +22,10 @@ class User extends React.Component{
         }
     }
     componentDidMount() {
-        if(sessionStorage.getItem('phone')){
-            let type = sessionStorage.getItem("type")
+        if(localStorage.getItem('phone')){
+            let type = localStorage.getItem("type")
             if(type == 1){ // customer
-                this.searchByPhone(sessionStorage.getItem("phone"))
+                this.searchByPhone(localStorage.getItem("phone"))
             }else {
                 this.getAll()
             }
@@ -76,7 +76,14 @@ class User extends React.Component{
     }
 
     render(){
-        let type = sessionStorage.getItem("type")
+        let listHight = 0;
+        if (document.getElementsByClassName('am-tab-bar-bar')[0]) {
+            listHight = document.documentElement.clientHeight - 45 - 40 - document.getElementsByClassName('am-tab-bar-bar')[0].offsetHeight
+        }else{
+            listHight = document.documentElement.clientHeight - 45 - 40 - 50
+        }
+        
+        let type = localStorage.getItem("type")
         return (
             
             <div>
@@ -98,9 +105,9 @@ class User extends React.Component{
                         
                         {/* <List renderHeader={() => 'Basic Style'} className="my-list"> */}
                 
-                        <List id="user-list" className="my-list">
+                        <List id="user-list" className="my-list" style={{'height':listHight}}>
                             {this.state.data.map(v=>(
-                                <Item arrow="horizontal" 
+                                <Item key={v.id} arrow="horizontal" 
                                 onClick={()=>this.props.history.push({
                                     pathname: '/userDetail',
                                     state: { detail: v }
