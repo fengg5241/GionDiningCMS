@@ -40,11 +40,11 @@ class Account extends React.Component{
 
             
             let record = {
-                phone:sessionStorage.getItem("phone"),
+                phone:localStorage.getItem("phone"),
                 password:formData.password,
                 updateTime:now.getTime()
             }
-            axios.post('/user/updatePassword',record).
+            axios.post(Constants.SERVICE_URL + '/user/updatePassword',record).
             then(res=>{
                 if (res.status===200) {
                     // this.props.history.goBack();
@@ -78,8 +78,8 @@ class Account extends React.Component{
     }
 
     logout(){
-        sessionStorage.removeItem("phone")
-        sessionStorage.removeItem("type")
+        localStorage.removeItem("phone")
+        localStorage.removeItem("type")
         this.props.history.push("/login")
     }
     

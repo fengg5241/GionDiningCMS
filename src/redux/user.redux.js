@@ -1,6 +1,7 @@
 
 import axios from 'axios'
 import {getRedirectPath} from '../util'
+import Constants from '../constants'
 const REGISTER_SUCCESS = 'REGISTER_SUCCESS'
 const LOGIN_SUCESS = 'LOGIN_SUCESS'
 const ERROR_MSG = 'ERROR_MSG'
@@ -53,12 +54,12 @@ export function login({user,pwd}){
 			phone:user
 		}
 		// dispatch(loginSuccess(returnUser))
-		axios.post('/user/login',returnUser)
+		axios.post(Constants.SERVICE_URL + '/user/login',returnUser)
 			.then(res=>{
 				if (res.status==200) {
 					if(res.data){
-						sessionStorage.setItem("phone",user)
-						sessionStorage.setItem("type",res.data.type)
+						localStorage.setItem("phone",user)
+						localStorage.setItem("type",res.data.type)
 						dispatch(loginSuccess(res.data))
 					}else {
 						dispatch(errorMsg("User name or password is wrong !"))
@@ -83,7 +84,7 @@ export function regisger({user,pwd,repeatpwd,type}){
 		return errorMsg('密码和确认密码不同')
 	}
 	return dispatch=>{
-		axios.post('/user/register',{user,pwd,type})
+		axios.post(Constants.SERVICE_URL + '/user/register',{user,pwd,type})
 			.then(res=>{
 				if (res.status==200&&res.data.code===0) {
 					dispatch(registerSuccess({user,pwd,type}))

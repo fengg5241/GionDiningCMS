@@ -6,6 +6,7 @@ import NavLinkBar from '../navLink/navLink'
 import Transaction from '../transaction/transaction'
 import User from '../user/user'
 import Account from '../account/account'
+import Menu from '../menu/menu'
 function Customer(){
     return <h2>Customer list</h2>
 }
@@ -23,7 +24,7 @@ class Dashboard extends React.Component {
 
     render(){
         let {pathname} = this.props.location
-        let userType = sessionStorage.getItem("type")
+        let userType = localStorage.getItem("type")
         if(pathname === '/') pathname = "/transaction"
 		const user = this.props.user
         const navList = [
@@ -63,6 +64,13 @@ class Dashboard extends React.Component {
                 text:'user',
                 icon:'user',
                 component:User,
+                title:'User Info'
+            },
+            {
+                path:'/menu',
+                text:'menu',
+                icon:'msg',
+                component:Menu,
                 title:'User Info'
             },
             {

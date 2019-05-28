@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios'
 import { withRouter } from 'react-router-dom'
 import { loadData } from '../../redux/user.redux'
 import { connect } from 'react-redux'
@@ -17,7 +16,7 @@ class AuthRoute extends React.Component{
 			return null
 		}
 
-		if(!sessionStorage.getItem('phone')){
+		if(!localStorage.getItem('phone')){
 			this.props.history.push('/login')
 		}
 		// 获取用户信息

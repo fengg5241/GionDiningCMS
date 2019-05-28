@@ -36,7 +36,8 @@ class UserDetail extends React.Component{
                 phone:detail.phone,
                 name:detail.name,
                 email:detail.email,
-                point:(detail.totalPayment * Constants.POINT_RATE).toFixed(2) - detail.point,
+                // point:(detail.totalPayment * Constants.POINT_RATE).toFixed(2) - detail.point,
+                point:detail.point,
                 payment:detail.totalPayment
              });
         }else {
@@ -61,7 +62,7 @@ class UserDetail extends React.Component{
       }
 
       insert(formData){
-        axios.get('/user/getByPhone/'+formData.phone).
+        axios.get(Constants.SERVICE_URL + '/user/getByPhone/'+formData.phone).
         then(res=>{
             if(res.status===200){
                 console.log(res);
@@ -75,7 +76,7 @@ class UserDetail extends React.Component{
                         createTime:now.getTime(),
                         updateTime:now.getTime()
                     }
-                    axios.post('/user/insert',record).
+                    axios.post(Constants.SERVICE_URL + '/user/insert',record).
                     then(res=>{
                         if (res.status===200) {
                             this.props.history.goBack();
@@ -100,14 +101,14 @@ class UserDetail extends React.Component{
                 updateTime:now.getTime()
                 
             }
-            axios.post('/user/update',record).
+            axios.post(Constants.SERVICE_URL + '/user/update',record).
             then(res=>{
                 if (res.status===200) {
                     this.props.history.goBack();
                 }
             })
         }else {
-            axios.get('/user/getByPhone/'+formData.phone).
+            axios.get(Constants.SERVICE_URL + '/user/getByPhone/'+formData.phone).
             then(res=>{
                 if(res.status===200){
                     console.log(res);
@@ -122,7 +123,7 @@ class UserDetail extends React.Component{
                             updateTime:now.getTime()
                             
                         }
-                        axios.post('/user/update',record).
+                        axios.post(Constants.SERVICE_URL + '/user/update',record).
                         then(res=>{
                             if (res.status===200) {
                                 this.props.history.goBack();
@@ -148,7 +149,7 @@ class UserDetail extends React.Component{
             id:detail.id,
             updateTime:Date.now()
         }
-        axios.post('/user/delete',record).
+        axios.post(Constants.SERVICE_URL + '/user/delete',record).
         then(res=>{
             if (res.status===200) {
                 this.props.history.goBack()

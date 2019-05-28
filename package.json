@@ -114,5 +114,18 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "proxy": "http://localhost:9090"
+  "proxy": {
+    "/user": {
+      "target": "http://localhost:8080",
+      "changeOrigin": true
+    },
+    "/transaction": {
+      "target": "http://localhost:8080",
+      "changeOrigin": true
+    },
+    "/sms": {
+      "target": "http://localhost:8080",
+      "changeOrigin": true
+    }
+  }
 }
