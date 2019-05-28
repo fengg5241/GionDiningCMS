@@ -49,7 +49,6 @@ class TransactionDetail extends React.Component{
             this.setState({ isNew: true });
             document.getElementById('phoneInput') ? document.getElementById('phoneInput').focus() : "";
         }
-        console.log(detail)
     }
     
     convertTimeToString(time){
@@ -92,6 +91,12 @@ class TransactionDetail extends React.Component{
                     axios.post(Constants.SERVICE_URL + '/user/addPoints',userPoint).
                     then(res=>{
                         if (res.status===200) {
+                            // Search point balance
+                            axios.get(Constants.SERVICE_URL + '/user/getById/'+userId).
+                            then(res=>{
+                                this.sendSMS(formData.phone,userPoint.point,res.data.point);
+                            })
+                            
                             this.props.history.goBack();
                         }
                     })
@@ -101,6 +106,30 @@ class TransactionDetail extends React.Component{
                 
             }
         })
+    }
+
+    sendSMS(phone,getPoint,pointBalance){
+        if(phone.length == 8){ //Singapore number
+            phone = "65"+phone;
+        }
+        let text = `Dear Customer, your points have been changed, ${getPoint >= 0 ? '+' :''}${getPoint}, current point balance is ${pointBalance}.Please go to http://gionpoint.com for details`
+        let paramObj = {
+            username:"Giondining",
+            password:"12345",
+            api_key:"8ibu4t8qkgqcutf",
+            from:"GionDining",
+            to:phone,
+            text:text,
+            type:"text"
+        }
+        
+        axios.post(Constants.SERVICE_URL + '/sms/send',paramObj).
+        then(function (response) {
+            console.log(response);
+        }).catch(function (error) {
+            console.log(error);
+        });
+       
     }
 
     onSubmit = () => {
