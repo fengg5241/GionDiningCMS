@@ -5,13 +5,10 @@
     https://gist.github.com/phillipgreenii/7c954e3c3911e5c32bd0
     -->
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.sc.fm.com</groupId>
-        <artifactId>cm-webui-sip-parent</artifactId>
-        <version>${revision}</version>
-    </parent>
-    <artifactId>cm-webui-sip</artifactId>
-   <name>CM-WEBUI-SIP</name>
+    <groupId>com.dining.gion</groupId>
+    <artifactId>gion-dining-cms</artifactId>
+    <version>1.0</version>
+    <name>gion-dining-cms</name>
 
    <packaging>war</packaging>
     

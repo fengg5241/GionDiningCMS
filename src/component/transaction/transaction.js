@@ -3,10 +3,12 @@ import PropTypes from 'prop-types'
 import {List,WhiteSpace,WingBlank,Pagination, SearchBar,NavBar,Button} from 'antd-mobile'
 import axios from 'axios'
 import {withRouter} from 'react-router-dom'
+import Constants from '../../constants'
 
 const Item = List.Item;
 const Brief = Item.Brief;
 
+ 
 class Transaction extends React.Component{
     
     constructor(props){
@@ -17,21 +19,19 @@ class Transaction extends React.Component{
     }
     componentDidMount() {
         // this.props.getUserList('genius')
-        if(!sessionStorage.getItem('phone')){
+        if(!localStorage.getItem('phone')){
             return;
         }
-        let type = sessionStorage.getItem("type")
+        let type = localStorage.getItem("type")
         if(type == 1){ // customer
-            this.searchByPhone(sessionStorage.getItem("phone"))
+            this.searchByPhone(localStorage.getItem("phone"))
         }else {
             this.getAll()
         }
-        
-        
     }
     
     getAll(){
-        axios.get('/transaction/getAll').
+        axios.get(Constants.SERVICE_URL + '/transaction/getAll').
         then(res=>{
             if(res.status===200){
                 this.setState({data:res.data})
@@ -50,7 +50,7 @@ class Transaction extends React.Component{
 
     searchByPhone(phone){
         if(phone){
-            axios.get('/transaction/getAllByPhone/'+phone).
+            axios.get(Constants.SERVICE_URL + '/transaction/getAllByPhone/'+phone).
             then(res=>{
                 if(res.status===200){
                     if(res.data){
@@ -77,7 +77,14 @@ class Transaction extends React.Component{
     }
 
     render(){
-        let type = sessionStorage.getItem("type")
+        let listHight = 0;
+        let type = localStorage.getItem("type")
+        if (document.getElementsByClassName('am-tab-bar-bar')[0]) {
+            listHight = document.documentElement.clientHeight - 45 - 40 - document.getElementsByClassName('am-tab-bar-bar')[0].offsetHeight
+        }else{
+            listHight = document.documentElement.clientHeight - 45 - 40 - 50
+        }
+
         return (
             <div>
                 {type == '1' ? 
@@ -100,9 +107,9 @@ class Transaction extends React.Component{
                         onSubmit={value => this.searchByPhone(value)}/>}
                         
                         {/* <List renderHeader={() => 'Basic Style'} className="my-list"> */}
-                        <List id="transaction-list" className="my-list">
+                        <List id="transaction-list" className="my-list" style={{'height':listHight}}>
                             {this.state.data.map(v=>(
-                                <Item arrow="horizontal" 
+                                <Item key={v.id} arrow="horizontal" 
                                 onClick={()=>this.props.history.push({
                                     pathname: '/transactionDetail',
                                     state: { detail: v }
