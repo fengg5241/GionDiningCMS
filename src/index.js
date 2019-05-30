@@ -15,6 +15,7 @@ import './index.css'
 import Dashboard from './component/dashboard/dashboard'
 import TransactionDetail from './component/transaction/transactionDetail'
 import UserDetail from './component/user/userDetail'
+import TeamDetail from './component/team/teamDetail'
 import Version from './component/version/version'
 
 const store = createStore(reducers, compose(
@@ -37,6 +38,7 @@ ReactDom.render(
 				<Route path='/register' component={Register}></Route>
 				<Route path='/transactionDetail' component={TransactionDetail}></Route>
 				<Route path='/userDetail' component={UserDetail}></Route>
+				<Route path='/teamDetail' component={TeamDetail}></Route>
 				<Route path='/version' component={Version}></Route>
 				<Route  default component={Dashboard}></Route>
 				</Switch>

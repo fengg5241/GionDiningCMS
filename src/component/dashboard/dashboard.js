@@ -7,6 +7,8 @@ import Transaction from '../transaction/transaction'
 import User from '../user/user'
 import Account from '../account/account'
 import Menu from '../menu/menu'
+import Share from '../share/share'
+
 function Customer(){
     return <h2>Customer list</h2>
 }
@@ -65,6 +67,13 @@ class Dashboard extends React.Component {
                 icon:'user',
                 component:User,
                 title:'User Info'
+            },
+            {
+                path:'/share',
+                text:'share',
+                icon:'user',
+                component:Share,
+                title:'Team Info'
             },
             {
                 path:'/menu',
