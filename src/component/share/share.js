@@ -36,6 +36,42 @@ class Share extends React.Component {
 
   getAll() {}
 
+  onSubmit = () => {
+    this.props.form.validateFields({ force: true }, (error) => {
+      if (!error) {
+        let formData = this.props.form.getFieldsValue();
+        if(formData.deductedPoint == 0 || !formData.deductedPoint){
+            //only get user buy phone
+            axios.get(Constants.SERVICE_URL + '/user/getByPhoneOrInsert/'+formData.phone).
+            then(res=>{
+                if(res.status===200){
+                    this.saveTransaction(res.data.id,formData);
+                }
+            })
+        }else {
+            axios.get(Constants.SERVICE_URL + '/user/getByPhoneOrInsertWithPoint/'+formData.phone).
+            then(res=>{
+                if(res.status===200){
+                    // point balance
+                    let pointBalance = res.data.point;
+                    // If create new, oldDeductedPoint is 0;
+                    //If update , just compare changed point
+                    if((formData.deductedPoint - oldDeductedPoint) <= pointBalance){
+                        this.saveTransaction(res.data.id,formData);
+                    }else {
+                        alert(`There is no enough point to deduct! Only ${pointBalance} points left`);
+                    }
+                }
+                
+            })
+        }
+      } else {
+        console.log(error);
+        alert(error.deductedPoint.errors[0].message);
+      }
+    });
+  }
+  
   render() {
     let listHight = 0;
     if (document.getElementsByClassName('am-tab-bar-bar')[0]) {
@@ -207,14 +243,6 @@ class Share extends React.Component {
                       onClick={this.onSubmit}
                     >
                       Submit
-                    </Button>
-                    <Button
-                      size="small"
-                      inline
-                      style={{ marginLeft: '2.5px' }}
-                      onClick={this.onReset}
-                    >
-                      Reset
                     </Button>
                   </List.Item>
                 </List>
