@@ -36,42 +36,8 @@ class Share extends React.Component {
 
   getAll() {}
 
-  onSubmit = () => {
-    this.props.form.validateFields({ force: true }, (error) => {
-      if (!error) {
-        let formData = this.props.form.getFieldsValue();
-        if(formData.deductedPoint == 0 || !formData.deductedPoint){
-            //only get user buy phone
-            axios.get(Constants.SERVICE_URL + '/user/getByPhoneOrInsert/'+formData.phone).
-            then(res=>{
-                if(res.status===200){
-                    this.saveTransaction(res.data.id,formData);
-                }
-            })
-        }else {
-            axios.get(Constants.SERVICE_URL + '/user/getByPhoneOrInsertWithPoint/'+formData.phone).
-            then(res=>{
-                if(res.status===200){
-                    // point balance
-                    let pointBalance = res.data.point;
-                    // If create new, oldDeductedPoint is 0;
-                    //If update , just compare changed point
-                    if((formData.deductedPoint - oldDeductedPoint) <= pointBalance){
-                        this.saveTransaction(res.data.id,formData);
-                    }else {
-                        alert(`There is no enough point to deduct! Only ${pointBalance} points left`);
-                    }
-                }
-                
-            })
-        }
-      } else {
-        console.log(error);
-        alert(error.deductedPoint.errors[0].message);
-      }
-    });
-  }
-  
+  onSubmit = () => {};
+
   render() {
     let listHight = 0;
     if (document.getElementsByClassName('am-tab-bar-bar')[0]) {
@@ -85,65 +51,11 @@ class Share extends React.Component {
     }
 
     let type = localStorage.getItem('type');
-    const separator = (sectionID, rowID) => (
-      <div
-        key={`${sectionID}-${rowID}`}
-        style={{
-          backgroundColor: '#F5F5F9',
-          height: 8,
-          borderTop: '1px solid #ECECED',
-          borderBottom: '1px solid #ECECED'
-        }}
-      />
-    );
-
-    let index = alacarteData.length - 1;
-
-    const row = (rowData, sectionID, rowID) => {
-      return (
-        <div key={rowData.id} style={{ padding: '0 15px' }}>
-          <div
-            style={{
-              lineHeight: '50px',
-              color: '#888',
-              fontSize: 18,
-              borderBottom: '1px solid #F6F6F6'
-            }}
-          >
-            {rowData.title}
-          </div>
-          <div
-            style={{
-              display: '-webkit-box',
-              display: 'flex',
-              padding: '15px 0'
-            }}
-          >
-            <img
-              style={{ height: '64px', marginRight: '15px' }}
-              src={rowData.img}
-              alt=""
-            />
-            <div style={{ lineHeight: 1 }}>
-              <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>
-                {rowData.title}
-              </div>
-              <div>
-                <span style={{ fontSize: '30px', color: '#FF6E27' }}>
-                  {rowData.price}
-                </span>{' '}
-                {rowData.des}
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    };
 
     return (
       <div>
         <NavBar className="fixd-header" mode="dark">
-          menu list
+          Share
         </NavBar>
 
         <div style={{ marginTop: 45, height: listHight + 40 }}>
@@ -153,7 +65,7 @@ class Share extends React.Component {
                 placeholder="Search"
                 ref={ref => (this.searchBarInstance = ref)}
                 onCancel={() => this.clearSearchCondition()}
-                onSubmit={value => this.searchByPhone(value)}
+                onSubmit={value => this.onSubmit(value)}
               />
 
               <List
@@ -167,15 +79,15 @@ class Share extends React.Component {
                     arrow="horizontal"
                     onClick={() =>
                       this.props.history.push({
-                        pathname: '/userDetail',
+                        pathname: '/shareDetail',
                         state: { detail: v }
                       })
                     }
                     //  extra={this.convertTimeToString(v.createTime)}
                     // >{v.phone}  total spend ${v.totalPayment}, has {(v.totalPayment * Constants.POINT_RATE).toFixed(2) - v.point} points</Item>
                   >
-                    {v.phone} total spend ${v.totalPayment}, has {v.point}{' '}
-                    points
+                    {v.phone} -- {v.name}
+                    
                   </Item>
                 ))}
               </List>
@@ -204,21 +116,13 @@ class Share extends React.Component {
                   >
                     Phone
                   </InputItem>
-                  <InputItem
-                    placeholder=""
-                    error={!!getFieldError('name')}
-                    {...getFieldProps('name', {
-                      initialValue: this.state.name
-                    })}
-                  >
-                    Name
-                  </InputItem>
+                  
 
                   <InputItem
                     placeholder="How many points want to deduct"
-                    error={!!getFieldError('deductedPoint')}
-                    {...getFieldProps('deductedPoint', {
-                      initialValue: this.state.deductedPoint
+                    error={!!getFieldError('point')}
+                    {...getFieldProps('point', {
+                      initialValue: this.state.point
                     })}
                   >
                     Point
