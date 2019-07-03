@@ -8,7 +8,8 @@ import {
   Tabs,
   ListView,
   SearchBar,
-  InputItem, Button
+  InputItem,
+  Button
 } from 'antd-mobile';
 import { createForm } from 'rc-form';
 import axios from 'axios';
@@ -29,16 +30,27 @@ class Share extends React.Component {
     };
   }
 
-  componentDidMount() { }
+  componentDidMount() {
+    this.getAll();
+  }
 
   clearSearchCondition() {
     this.searchBarInstance.setState({ value: '' });
     this.getAll();
   }
 
-  getAll() { }
+  getAll() {
+    let userId = localStorage.getItem('userId');
+    axios
+      .post(Constants.SERVICE_URL + '/user/getAllTeamMembersByUserId', userId)
+      .then(res => {
+        if (res.status === 200) {
+          this.setState({ data: res.data });
+        }
+      });
+  }
 
-  onSubmit = () => { };
+  onSubmit = () => {};
 
   render() {
     let listHight = 0;
@@ -56,11 +68,21 @@ class Share extends React.Component {
     const { getFieldProps, getFieldError } = this.props.form;
     return (
       <div>
-        <NavBar className='fixd-header' mode='dark'
-            rightContent={[
-                <Button size="small" type='primary' onClick={()=>this.props.history.push('/shareDetail')}>+</Button>,
-            ]}
-        >Share</NavBar>  
+        <NavBar
+          className="fixd-header"
+          mode="dark"
+          rightContent={[
+            <Button
+              size="small"
+              type="primary"
+              onClick={() => this.props.history.push('/shareDetail')}
+            >
+              +
+            </Button>
+          ]}
+        >
+          Share
+        </NavBar>
 
         <div style={{ marginTop: 45, height: listHight + 40 }}>
           <Tabs tabs={tabs}>
@@ -87,11 +109,10 @@ class Share extends React.Component {
                         state: { detail: v }
                       })
                     }
-                  //  extra={this.convertTimeToString(v.createTime)}
-                  // >{v.phone}  total spend ${v.totalPayment}, has {(v.totalPayment * Constants.POINT_RATE).toFixed(2) - v.point} points</Item>
+                    //  extra={this.convertTimeToString(v.createTime)}
+                    // >{v.phone}  total spend ${v.totalPayment}, has {(v.totalPayment * Constants.POINT_RATE).toFixed(2) - v.point} points</Item>
                   >
                     {v.phone} -- {v.name}
-
                   </Item>
                 ))}
               </List>
@@ -120,7 +141,6 @@ class Share extends React.Component {
                   >
                     Phone
                   </InputItem>
-
 
                   <InputItem
                     placeholder="How many points want to deduct"
