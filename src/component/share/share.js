@@ -6,11 +6,13 @@ import {
   WingBlank,
   NavBar,
   Tabs,
-  ListView
+  ListView,
+  SearchBar,
+  InputItem, Button
 } from 'antd-mobile';
+import { createForm } from 'rc-form';
 import axios from 'axios';
 import Constants from '../../constants';
-import service from './alacarte';
 
 const Item = List.Item;
 const tabs = [{ title: 'Share TeamMember' }, { title: 'Share point' }];
@@ -27,16 +29,16 @@ class Share extends React.Component {
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() { }
 
   clearSearchCondition() {
     this.searchBarInstance.setState({ value: '' });
     this.getAll();
   }
 
-  getAll() {}
+  getAll() { }
 
-  onSubmit = () => {};
+  onSubmit = () => { };
 
   render() {
     let listHight = 0;
@@ -51,12 +53,14 @@ class Share extends React.Component {
     }
 
     let type = localStorage.getItem('type');
-
+    const { getFieldProps, getFieldError } = this.props.form;
     return (
       <div>
-        <NavBar className="fixd-header" mode="dark">
-          Share
-        </NavBar>
+        <NavBar className='fixd-header' mode='dark'
+            rightContent={[
+                <Button size="small" type='primary' onClick={()=>this.props.history.push('/shareDetail')}>+</Button>,
+            ]}
+        >Share</NavBar>  
 
         <div style={{ marginTop: 45, height: listHight + 40 }}>
           <Tabs tabs={tabs}>
@@ -83,11 +87,11 @@ class Share extends React.Component {
                         state: { detail: v }
                       })
                     }
-                    //  extra={this.convertTimeToString(v.createTime)}
-                    // >{v.phone}  total spend ${v.totalPayment}, has {(v.totalPayment * Constants.POINT_RATE).toFixed(2) - v.point} points</Item>
+                  //  extra={this.convertTimeToString(v.createTime)}
+                  // >{v.phone}  total spend ${v.totalPayment}, has {(v.totalPayment * Constants.POINT_RATE).toFixed(2) - v.point} points</Item>
                   >
                     {v.phone} -- {v.name}
-                    
+
                   </Item>
                 ))}
               </List>
@@ -116,7 +120,7 @@ class Share extends React.Component {
                   >
                     Phone
                   </InputItem>
-                  
+
 
                   <InputItem
                     placeholder="How many points want to deduct"
@@ -127,18 +131,7 @@ class Share extends React.Component {
                   >
                     Point
                   </InputItem>
-                  <DatePicker
-                    mode="date"
-                    {...getFieldProps('dp', {
-                      initialValue: this.state.dpValue,
-                      rules: [
-                        { required: true, message: 'Must select a date' },
-                        { validator: this.validateDatePicker }
-                      ]
-                    })}
-                  >
-                    <List.Item arrow="horizontal">Date</List.Item>
-                  </DatePicker>
+
                   <List.Item>
                     <Button
                       type="primary"
@@ -159,4 +152,4 @@ class Share extends React.Component {
   }
 }
 
-export default Share;
+export default createForm()(Share);
