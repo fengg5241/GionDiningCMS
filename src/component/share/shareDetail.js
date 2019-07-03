@@ -149,42 +149,19 @@ class ShareDetail extends React.Component {
     this.props.form.validateFields({ force: true }, error => {
       if (!error) {
         let formData = this.props.form.getFieldsValue();
-        if (formData.deductedPoint == 0 || !formData.deductedPoint) {
-          //only get user buy phone
-          axios
-            .get(
-              Constants.SERVICE_URL +
-                '/user/getByPhoneOrInsert/' +
-                formData.phone
-            )
-            .then(res => {
-              if (res.status === 200) {
-                this.saveTransaction(res.data.id, formData);
-              }
-            });
-        } else {
-          axios
-            .get(
-              Constants.SERVICE_URL +
-                '/user/getByPhoneOrInsertWithPoint/' +
-                formData.phone
-            )
-            .then(res => {
-              if (res.status === 200) {
-                // point balance
-                let pointBalance = res.data.point;
-                // If create new, oldDeductedPoint is 0;
-                //If update , just compare changed point
-                if (formData.deductedPoint - oldDeductedPoint <= pointBalance) {
-                  this.saveTransaction(res.data.id, formData);
-                } else {
-                  alert(
-                    `There is no enough point to deduct! Only ${pointBalance} points left`
-                  );
-                }
-              }
-            });
-        }
+        //check input phone number if has parent
+        axios
+          .get(Constants.SERVICE_URL + '/user/getByPhone/' + formData.phone)
+          .then(function(response) {
+            //if path is empty ,
+            if (!response.data.path) {
+              // update path
+            }
+            console.log(response);
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
       } else {
         console.log(error);
         alert(error.deductedPoint.errors[0].message);
@@ -194,43 +171,6 @@ class ShareDetail extends React.Component {
 
   onReset = () => {
     this.props.form.resetFields();
-    setTimeout(() => console.log(this.state), 0);
-  };
-
-  onDelete = () => {
-    var detail = this.props.location.state && this.props.location.state.detail;
-    let record = {
-      id: detail.id,
-      updateTime: Date.now()
-    };
-    axios
-      .post(Constants.SERVICE_URL + '/transaction/delete', record)
-      .then(res => {
-        if (res.status === 200) {
-          // Delete get or deducted point
-          let formData = this.props.form.getFieldsValue();
-          let deductedPoint = formData.deductedPoint
-            ? formData.deductedPoint
-            : 0;
-          let userPoint = {
-            id: detail.user.id,
-            point:
-              deductedPoint -
-              (formData.payment * Constants.POINT_RATE).toFixed(2)
-          };
-
-          axios
-            .post(Constants.SERVICE_URL + '/user/addPoints', userPoint)
-            .then(res => {
-              if (res.status === 200) {
-                this.props.history.goBack();
-              }
-            });
-
-          this.props.history.goBack();
-        }
-      });
-
     setTimeout(() => console.log(this.state), 0);
   };
 
@@ -329,16 +269,6 @@ class ShareDetail extends React.Component {
                   onClick={this.onSubmit}
                 >
                   Submit
-                </Button>
-
-                <Button
-                  type="warning"
-                  size="small"
-                  inline
-                  style={{ float: 'right' }}
-                  onClick={this.onDelete}
-                >
-                  Delete
                 </Button>
               </List.Item>
             </List>
