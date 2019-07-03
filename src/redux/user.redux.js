@@ -59,6 +59,7 @@ export function login({user,pwd}){
 				if (res.status==200) {
 					if(res.data){
 						localStorage.setItem("phone",user)
+						localStorage.setItem('userId', res.data.id);
 						localStorage.setItem("type",res.data.type)
 						dispatch(loginSuccess(res.data))
 					}else {
