@@ -39,15 +39,22 @@ class Share extends React.Component {
     this.getAll();
   }
 
-  getAll() {
+  async getAll() {
     let userId = localStorage.getItem('userId');
-    axios
-      .post(Constants.SERVICE_URL + '/user/getAllTeamMembersByUserId', userId)
-      .then(res => {
-        if (res.status === 200) {
-          this.setState({ data: res.data });
-        }
-      });
+    if(!userId){
+      let phone = localStorage.getItem('phone');
+      let user = await axios.get(Constants.SERVICE_URL + '/user/getByPhone/' + phone)
+      userId = user.data.id;
+    }
+
+    let teamMembers = await axios.get(Constants.SERVICE_URL + '/user/getAllTeamMembersByUserId/'+userId )
+    if(teamMembers && teamMembers.data && teamMembers.data.length > 0){
+      this.setState({ data: teamMembers.data });
+    }else {
+      this.setState({ data: [] });
+    }
+
+    
   }
 
   onSubmit = () => {};
@@ -99,22 +106,22 @@ class Share extends React.Component {
                 className="my-list"
                 style={{ height: listHight }}
               >
-                {this.state.data.map(v => (
+                {this.state.data.length > 0 ? this.state.data.map(v => (
                   <Item
                     key={v.id}
                     arrow="horizontal"
-                    onClick={() =>
-                      this.props.history.push({
-                        pathname: '/shareDetail',
-                        state: { detail: v }
-                      })
-                    }
+                    // onClick={() =>
+                    //   this.props.history.push({
+                    //     pathname: '/shareDetail',
+                    //     state: { detail: v }
+                    //   })
+                    // }
                     //  extra={this.convertTimeToString(v.createTime)}
                     // >{v.phone}  total spend ${v.totalPayment}, has {(v.totalPayment * Constants.POINT_RATE).toFixed(2) - v.point} points</Item>
                   >
                     {v.phone} -- {v.name}
                   </Item>
-                ))}
+                )) : null}
               </List>
               {/* <Pagination total={5} current={1} locale={locale} /> */}
             </WingBlank>
