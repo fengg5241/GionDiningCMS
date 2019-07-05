@@ -149,22 +149,29 @@ class ShareDetail extends React.Component {
     this.props.form.validateFields({ force: true }, error => {
       if (!error) {
         let formData = this.props.form.getFieldsValue();
+        //check if add himself
+        if(formData.phone == localStorage.getItem("phone")){
+          alert("Cannot invite self to join team !");
+          return;
+        }
         //check input phone number if has parent
         axios
           .get(Constants.SERVICE_URL + '/user/getByPhone/' + formData.phone)
           .then(function(response) {
             //if path is empty ,
-            if (!response.data.path) {
+            if (!response || !response.path) {
               // update path
+              axios.post(Constants.SERVICE_URL + '/user/updatePath')
+                .then(function(response) {});
+            }else {
+              alert(phone + " is already in other team !");
             }
-            console.log(response);
           })
           .catch(function(error) {
             console.log(error);
           });
       } else {
         console.log(error);
-        alert(error.deductedPoint.errors[0].message);
       }
     });
   };
@@ -252,10 +259,13 @@ class ShareDetail extends React.Component {
                 Phone
               </InputItem>
               <InputItem
-                placeholder=""
+                placeholder="Name cannot be empty"
                 error={!!getFieldError('name')}
                 {...getFieldProps('name', {
-                  initialValue: this.state.name
+                  initialValue: this.state.name,
+                  rules: [
+                    { required: true, message: 'Must type name' }
+                  ]
                 })}
               >
                 Name
