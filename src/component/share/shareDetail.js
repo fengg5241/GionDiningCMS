@@ -145,36 +145,36 @@ class ShareDetail extends React.Component {
       });
   }
 
-  onSubmit = () => {
+  async onSubmit() {
     this.props.form.validateFields({ force: true }, error => {
       if (!error) {
         let formData = this.props.form.getFieldsValue();
         //check if add himself
-        if(formData.phone == localStorage.getItem("phone")){
-          alert("Cannot invite self to join team !");
+        if (formData.phone == localStorage.getItem('phone')) {
+          alert('Cannot invite self to join team !');
           return;
         }
         //check input phone number if has parent
-        axios
-          .get(Constants.SERVICE_URL + '/user/getByPhone/' + formData.phone)
-          .then(function(response) {
-            //if path is empty ,
-            if (!response || !response.path) {
-              // update path
-              axios.post(Constants.SERVICE_URL + '/user/updatePath')
-                .then(function(response) {});
-            }else {
-              alert(phone + " is already in other team !");
-            }
-          })
-          .catch(function(error) {
-            console.log(error);
-          });
+        let addedUser = await axios.get(Constants.SERVICE_URL + '/user/getByPhoneOrInsert/' + formData.phone);
+        if(!(addedUser && addedUser.data && addedUser.data.path)){
+          //if path is empty, update path, can login user path first
+          let loginUser = await axios.get(Constants.SERVICE_URL + '/user/getByPhone/' + localStorage.getItem('phone'));
+          let addedUserPath = '';
+          if(loginUser.data.path){
+            addedUserPath = loginUser.data.path + "/" + addedUser.data.id
+          }else {
+            addedUserPath = loginUser.data.id + "/" + addedUser.data.id
+          }
+          // update path
+          await axios.post(Constants.SERVICE_URL + '/user/updatePath',addedUserPath);
+        }else {
+          alert(phone + ' is already in other team !');
+        }
       } else {
         console.log(error);
       }
     });
-  };
+  }
 
   onReset = () => {
     this.props.form.resetFields();
@@ -263,9 +263,7 @@ class ShareDetail extends React.Component {
                 error={!!getFieldError('name')}
                 {...getFieldProps('name', {
                   initialValue: this.state.name,
-                  rules: [
-                    { required: true, message: 'Must type name' }
-                  ]
+                  rules: [{ required: true, message: 'Must type name' }]
                 })}
               >
                 Name
@@ -276,7 +274,7 @@ class ShareDetail extends React.Component {
                   type="primary"
                   size="small"
                   inline
-                  onClick={this.onSubmit}
+                  onClick={() => this.onSubmit}
                 >
                   Submit
                 </Button>
